@@ -20,7 +20,7 @@ use typenum::{self, Cmp, Greater};
 use simba::scalar::{ClosedAdd, ClosedMul};
 
 use crate::base::allocator::Allocator;
-use crate::base::dimension::{Dim, DimName, Dynamic, U1, U2, U3, U4, U5, U6};
+use crate::base::dimension::{Const, Dim, DimName, Dynamic, ToTypenum, U1, U2, U3, U4, U5, U6};
 use crate::base::storage::Storage;
 use crate::base::{DefaultAllocator, Matrix, MatrixMN, MatrixN, Scalar, Unit, Vector, VectorN};
 
@@ -305,12 +305,12 @@ where
     ///
     /// # Example
     /// ```
-    /// # use nalgebra::{Dynamic, DMatrix, Matrix, U1};
+    /// # use nalgebra::{Dynamic, DMatrix, Matrix, Const};
     ///
     /// let vec = vec![0, 1, 2, 3, 4, 5];
     /// let vec_ptr = vec.as_ptr();
     ///
-    /// let matrix = Matrix::from_vec_generic(Dynamic::new(vec.len()), U1, vec);
+    /// let matrix = Matrix::from_vec_generic(Dynamic::new(vec.len()), Const::<1>, vec);
     /// let matrix_storage_ptr = matrix.data.as_vec().as_ptr();
     ///
     /// // `matrix` is backed by exactly the same `Vec` as it was constructed from.
@@ -863,7 +863,7 @@ where
     fn sample<'a, G: Rng + ?Sized>(&self, rng: &'a mut G) -> Unit<VectorN<N, D>> {
         Unit::new_normalize(VectorN::from_distribution_generic(
             D::name(),
-            U1,
+            Const::<1>,
             &rand_distr::StandardNormal,
             rng,
         ))
@@ -1049,6 +1049,7 @@ componentwise_constructors_impl!(
  */
 impl<N, R: DimName> VectorN<N, R>
 where
+    R: ToTypenum,
     N: Scalar + Zero + One,
     DefaultAllocator: Allocator<N, R>,
 {
@@ -1070,7 +1071,7 @@ where
     #[inline]
     pub fn x() -> Self
     where
-        R::Value: Cmp<typenum::U0, Output = Greater>,
+        R::Typenum: Cmp<typenum::U0, Output = Greater>,
     {
         let mut res = Self::zeros();
         unsafe {
@@ -1084,7 +1085,7 @@ where
     #[inline]
     pub fn y() -> Self
     where
-        R::Value: Cmp<typenum::U1, Output = Greater>,
+        R::Typenum: Cmp<typenum::U1, Output = Greater>,
     {
         let mut res = Self::zeros();
         unsafe {
@@ -1098,7 +1099,7 @@ where
     #[inline]
     pub fn z() -> Self
     where
-        R::Value: Cmp<typenum::U2, Output = Greater>,
+        R::Typenum: Cmp<typenum::U2, Output = Greater>,
     {
         let mut res = Self::zeros();
         unsafe {
@@ -1112,7 +1113,7 @@ where
     #[inline]
     pub fn w() -> Self
     where
-        R::Value: Cmp<typenum::U3, Output = Greater>,
+        R::Typenum: Cmp<typenum::U3, Output = Greater>,
     {
         let mut res = Self::zeros();
         unsafe {
@@ -1126,7 +1127,7 @@ where
     #[inline]
     pub fn a() -> Self
     where
-        R::Value: Cmp<typenum::U4, Output = Greater>,
+        R::Typenum: Cmp<typenum::U4, Output = Greater>,
     {
         let mut res = Self::zeros();
         unsafe {
@@ -1140,7 +1141,7 @@ where
     #[inline]
     pub fn b() -> Self
     where
-        R::Value: Cmp<typenum::U5, Output = Greater>,
+        R::Typenum: Cmp<typenum::U5, Output = Greater>,
     {
         let mut res = Self::zeros();
         unsafe {
@@ -1154,7 +1155,7 @@ where
     #[inline]
     pub fn x_axis() -> Unit<Self>
     where
-        R::Value: Cmp<typenum::U0, Output = Greater>,
+        R::Typenum: Cmp<typenum::U0, Output = Greater>,
     {
         Unit::new_unchecked(Self::x())
     }
@@ -1163,7 +1164,7 @@ where
     #[inline]
     pub fn y_axis() -> Unit<Self>
     where
-        R::Value: Cmp<typenum::U1, Output = Greater>,
+        R::Typenum: Cmp<typenum::U1, Output = Greater>,
     {
         Unit::new_unchecked(Self::y())
     }
@@ -1172,7 +1173,7 @@ where
     #[inline]
     pub fn z_axis() -> Unit<Self>
     where
-        R::Value: Cmp<typenum::U2, Output = Greater>,
+        R::Typenum: Cmp<typenum::U2, Output = Greater>,
     {
         Unit::new_unchecked(Self::z())
     }
@@ -1181,7 +1182,7 @@ where
     #[inline]
     pub fn w_axis() -> Unit<Self>
     where
-        R::Value: Cmp<typenum::U3, Output = Greater>,
+        R::Typenum: Cmp<typenum::U3, Output = Greater>,
     {
         Unit::new_unchecked(Self::w())
     }
@@ -1190,7 +1191,7 @@ where
     #[inline]
     pub fn a_axis() -> Unit<Self>
     where
-        R::Value: Cmp<typenum::U4, Output = Greater>,
+        R::Typenum: Cmp<typenum::U4, Output = Greater>,
     {
         Unit::new_unchecked(Self::a())
     }
@@ -1199,7 +1200,7 @@ where
     #[inline]
     pub fn b_axis() -> Unit<Self>
     where
-        R::Value: Cmp<typenum::U5, Output = Greater>,
+        R::Typenum: Cmp<typenum::U5, Output = Greater>,
     {
         Unit::new_unchecked(Self::b())
     }
